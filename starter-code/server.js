@@ -1,6 +1,6 @@
 'use strict';
-// TODO: Install and require the node postgres package into your server.js, and ensure that it's now a new dependency in your package.json
-
+// DONE: Install and require the node postgres package into your server.js, and ensure that it's now a new dependency in your package.json
+const pg = require('pg');
 const express = require('express');
 // REVIEW: Require in body-parser for post requests in our server
 const bodyParser = require('body-parser');
@@ -25,7 +25,6 @@ app.get('/new', function(request, response) {
 });
 
 
-
 // NOTE: Routes for making API calls to enact CRUD Operations on our database
 app.get('/articles/all', function(request, response) {
   let client = new pg.Client(conString); // Pass the conString to pg, which creates a new client object
@@ -48,8 +47,18 @@ app.post('/articles/insert', function(request, response) {
     if (err) console.error(err);
 
     client.query(
-      ``, // TODO: Write the SQL query to insert a new record
-      [], // TODO: Get each value from the request's body
+      `INSERT INTO
+      articles(title, author, "authorUrl", category, "publishedOn", body)
+      VALUES ($1, $2, $3, $4, $5, $6);`, // TODO: Write the SQL query to insert a new record
+      [
+        request.body.title,
+        request.body.author,
+        request.body.authorUrl,
+        request.body. category,
+        request.body.publishedOn,
+        request.body.body
+      ],
+      // TODO: Get each value from the request's body
       function(err) {
         if (err) console.error(err);
         client.end();
@@ -66,13 +75,24 @@ app.put('/articles/update', function(request, response) {
     if (err) console.error(err);
 
     client.query(
-      ``, // TODO: Write the SQL query to update an existing record
-      [], // TODO: Get each value from the request's body
+      `UPDATE articles(title, author, "authorUrl", category, "publishedOn", body)
+      SET (title = 'title', author = 'author', "authorUrl" = '"authorUrl"', category = 'category', "publishedOn" = '"publishedOn"', body = 'body')
+      WHERE (id = 'id')`),
+
+      // TODO: Write the SQL query to insert a new record
+      [
+        request.body.title,
+        request.body.author,
+        request.body.authorUrl,
+        request.body.category,
+        request.body.publishedOn,
+        request.body.body
+      ],
+      // TODO: Get each value from the request's body
       function(err) {
         if (err) console.error(err);
         client.end();
       }
-    );
   })
   response.send('insert complete');
 });
@@ -84,7 +104,9 @@ app.delete('/articles/delete', function(request, response) {
     if (err) console.error(err);
 
     client.query(
-      ``, // TODO: Write the SQL query to delete a record
+      `DELETE FROM articles
+      WHERE (id = 'id')`,
+   // TODO: Write the SQL query to delete a record
       function(err) {
         if (err) console.error(err);
         client.end();
@@ -101,7 +123,7 @@ app.delete('/articles/truncate', function(request, response) {
     if (err) console.error(err);
 
     client.query(
-      '', // TODO: Write the SQl query to truncate the table
+      'TRUNCATE TABLE articles', // TODO: Write the SQl query to truncate the table
       function(err) {
         if (err) console.error(err);
         client.end();
